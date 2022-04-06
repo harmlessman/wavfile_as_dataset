@@ -15,18 +15,19 @@ class wav_spleeter():
         self.filelist = [wav for wav in os.listdir(path) if wav.endswith(".wav")]
         self.filenum = len(self.filelist)
         self.partnum = list(set(int(i.split('_')[0]) for i in self.filelist))
+        self.filelist = sorted(self.filelist, key=lambda x: int(x.split('_')[0]))
         self.partnum.sort()
         self.total_time = 0
 
-        print(self.partnum)
         os.chdir(self.path)
-        print(self.filelist)
-        print(f'파일이 {self.filenum}개 있습니다.')
 
         for i in self.filelist:
             a = wave.open(i, 'rb')
             self.total_time += a.getnframes() / a.getframerate()
 
+        print(self.partnum)
+        print(self.filelist)
+        print(f'파일이 {self.filenum}개 있습니다.')
         print(self.total_time)
         print(f'total time : {datetime.timedelta(seconds=self.total_time)}')
 
@@ -95,7 +96,7 @@ class wav_spleeter():
 
 
     def folderinfo(self):
-        info = os.popen('dir').read()
+        info = os.popen('dir | sort').read()
         f = open("info.txt", 'w')
         print(info)
         f.write(f'wav file total time : {datetime.timedelta(seconds=self.total_time)}\n\n')
@@ -105,8 +106,8 @@ class wav_spleeter():
 
 
 if __name__ == '__main__':
-    #path = 'C:\\Users\\82109\\Desktop\\dataset_emilia'
-    path = 'C:\\Users\\82109\\Desktop\\Tacotron2-Wavenet-Korean-TTS-master\\datasets\\kss\\audio'
+    path = 'C:\\Users\\82109\\Desktop\\dataset_emilia'
+    #path = 'C:\\Users\\82109\\Desktop\\Tacotron2-Wavenet-Korean-TTS-master\\datasets\\kss\\audio'
     wavfile = wav_spleeter(path)
     wavfile.folderinfo()
     #wavfile.spleeter(0)
