@@ -1,24 +1,17 @@
 import os
 import wave
 import datetime
-
+from set import initial
 
 # filelist -> wav file list (str)
 # filenum -> wav file count (int)
 # partnum -> ani part num list (int)
 # path -> dataset path (str)
 # total_time -> wav file total time
-class wav_spleeter():
-    def __init__(self, path):
-        self.path = path
-        self.spl_path = path+"\\spleeter_out\\"
-        self.filelist = [wav for wav in os.listdir(path) if wav.endswith(".wav")]
-        self.filenum = len(self.filelist)
-        self.partnum = list(set(int(i.split('_')[0]) for i in self.filelist))
-        self.filelist = sorted(self.filelist, key=lambda x: int(x.split('_')[0]))
-        self.partnum.sort()
+class wav_spleeter(initial):
+    def __init__(self):
+        super().__init__()
         self.total_time = 0
-
         os.chdir(self.path)
 
         for i in self.filelist:
@@ -106,9 +99,7 @@ class wav_spleeter():
 
 
 if __name__ == '__main__':
-    path = 'C:\\Users\\82109\\Desktop\\dataset_emilia'
-    #path = 'C:\\Users\\82109\\Desktop\\Tacotron2-Wavenet-Korean-TTS-master\\datasets\\kss\\audio'
-    wavfile = wav_spleeter(path)
+    wavfile = wav_spleeter()
     wavfile.folderinfo()
     #wavfile.spleeter(0)
     #wavfile.spldata_to_path()

@@ -1,39 +1,76 @@
+import speech_recognition
 import speech_recognition as sr
 import librosa
 import os
+from google.cloud import speech
+import io
+from google.cloud import storage
 import json
-
-class wav_to_text():
-    def __init__(self, path):
-        self.path = path
-        self.spl_path = path+"\\spleeter_out\\"
-        self.spl_list = [wav for wav in os.listdir(self.spl_path) if wav.endswith(".wav")]
+from set import initial
+class wav_to_text(initial):
+    def __init__(self):
+        super().__init__()
         self.speechtext = {}
+        self.monotext = {}
         print(self.spl_list)
 
 
-    def speech_to_text(self):
+    def googleweb(self):
         r = sr.Recognizer()
-        self.spl_list = ['4_002_spl.wav']
+        #self.spl_list = ['1_002_spl.wav']
         print(self.spl_list)
         for l in self.spl_list:
             sample_wav, rate = librosa.core.load(self.spl_path + l)
             korean_audio = sr.AudioFile(self.spl_path + l)
             with korean_audio as source:
                 audio = r.record(source)
-            text = r.recognize_google(audio_data=audio, language='ja-JP')
-            self.speechtext[l]=text
-            #r.recognize_google_cloud(audio_data=audio, language='ja-JP')
 
-    def rite_json(self):
-        with open('spl_text.json', 'w', encoding="utf-8") as f:
+            try:
+                text = r.recognize_google(audio_data=audio, language='ja-JP')
+            except sr.UnknownValueError:
+                text = 'this file is too short'
+            self.speechtext[l]=text
+            print(text)
+
+
+    def write_json(self):
+        with open('spl_googleweb.json', 'w+', encoding="utf-8") as f:
             json.dump(self.speechtext, f, ensure_ascii=False, indent='\t')
 
+    def google_cloud_speech(self):
+        """Transcribe the given audio file."""
+        #self.mono_list=['1_020_spl.wav']
+        for i in self.mono_list:
+            text = ""
+            client = speech.SpeechClient()
+            with io.open(self.mono_path+i, "rb") as audio_file:
+                content = audio_file.read()
 
+            audio = speech.RecognitionAudio(content=content)
+            config = speech.RecognitionConfig(
+                encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+                sample_rate_hertz=44100,
+                language_code="ja-JP",
+                audio_channel_count=1,
+            )
 
+            response = client.recognize(config=config, audio=audio)
+            # print(response.results)
+            # Each result is for a consecutive portion of the audio. Iterate through
+            # them to get the transcripts for the entire audio file.
+            for result in response.results:
+                # The first alternative is the most likely one for this portion.
+                text = format(result.alternatives[0].transcript)
+                print(f'{i} = {text}')
+                self.monotext[i] = text
+
+    def writemono_json(self):
+        with open('spl_google_cloud.json', 'w+', encoding="utf-8") as f:
+            json.dump(self.monotext, f, ensure_ascii=False, indent='\t')
 
 if __name__=='__main__':
-    a = wav_to_text('C:\\Users\\82109\\Desktop\\dataset_emilia')
-
-    a.speech_to_text()
-    a.write_json()
+    a = wav_to_text()
+    a.google_cloud_speech()
+    #a.writemono_json()
+    #a.speech_to_text()
+    #a.write_json()
