@@ -34,26 +34,31 @@ class wav_spleeter(initial):
 
     def spleeter(self, start, end=0):
         spl_command = 'spleeter separate -p spleeter:2stems -o spleeter_out '
-        if start==0:
+        if self.code==0:
+            if start == 0:
+                for i in self.filelist:
+                    os.system(spl_command + i)
+                print("Done")
+            elif end == 0 and (start in self.partnum):
+                for i in self.filelist:
+                    if int(i[0]) == start:
+                        os.system(spl_command + i)
+                print("Done")
+            elif start != 0 and end != 0:
+                if start not in self.partnum or end not in self.partnum:
+                    print("RangeError!1")
+                if start > end:
+                    print("end must large then start!")
+                for i in self.filelist:
+                    if i[0] >= start and i[0] <= end:
+                        os.system(spl_command + i)
+                print("Done")
+            else:
+                print("RangeError!2")
+        elif self.code==1:
             for i in self.filelist:
-                os.system(spl_command+i)
+                os.system(spl_command + i)
             print("Done")
-        elif end==0 and (start in self.partnum):
-            for i in self.filelist:
-                if int(i[0])==start:
-                    os.system(spl_command+i)
-            print("Done")
-        elif start!=0 and end!=0:
-            if start not in self.partnum or end not in self.partnum:
-                print("RangeError!1")
-            if start>end:
-                print("end must large then start!")
-            for i in self.filelist:
-                if i[0]>=start and i[0]<=end:
-                    os.system(spl_command+i)
-            print("Done")
-        else:
-            print("RangeError!2")
 
 
     """

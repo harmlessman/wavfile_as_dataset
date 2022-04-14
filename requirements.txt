@@ -1,0 +1,5 @@
+google.cloud
+google-cloud-speech
+pydub
+SpeechRecognition
+spleeter

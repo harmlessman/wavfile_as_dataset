@@ -2,9 +2,11 @@ import speech_recognition
 import speech_recognition as sr
 import librosa
 import os
+from google.cloud import speech_v1p1beta1
+from google.cloud import speech_v1
 from google.cloud import speech
 import io
-from google.cloud import storage
+
 import json
 from set import initial
 class wav_to_text(initial):
@@ -17,7 +19,6 @@ class wav_to_text(initial):
 
     def googleweb(self):
         r = sr.Recognizer()
-        #self.spl_list = ['1_002_spl.wav']
         print(self.spl_list)
         for l in self.spl_list:
             sample_wav, rate = librosa.core.load(self.spl_path + l)
@@ -39,17 +40,18 @@ class wav_to_text(initial):
 
     def google_cloud_speech(self):
         """Transcribe the given audio file."""
-        #self.mono_list=['1_020_spl.wav']
+        self.mono_list = ["9_016_spl.wav"]
         for i in self.mono_list:
             text = ""
-            client = speech.SpeechClient()
+            client = speech_v1.SpeechClient()
             with io.open(self.mono_path+i, "rb") as audio_file:
                 content = audio_file.read()
 
-            audio = speech.RecognitionAudio(content=content)
-            config = speech.RecognitionConfig(
-                encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-                sample_rate_hertz=44100,
+            audio = speech_v1.RecognitionAudio(content=content)
+
+            config = speech_v1.RecognitionConfig(
+                encoding=speech_v1.RecognitionConfig.AudioEncoding.LINEAR16,
+                sample_rate_hertz=22050,
                 language_code="ja-JP",
                 audio_channel_count=1,
             )
@@ -71,6 +73,7 @@ class wav_to_text(initial):
 if __name__=='__main__':
     a = wav_to_text()
     a.google_cloud_speech()
+    #a.googleweb()
     #a.writemono_json()
     #a.speech_to_text()
     #a.write_json()
