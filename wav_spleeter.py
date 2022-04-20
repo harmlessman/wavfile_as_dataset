@@ -2,12 +2,10 @@ import os
 import wave
 import datetime
 from set import initial
+"""
+    잡음제거 라이브러리(spleeter)를 사용하여 path내의 wavfile들의 잡음을 제거.
+"""
 
-# filelist -> wav file list (str)
-# filenum -> wav file count (int)
-# partnum -> ani part num list (int)
-# path -> dataset path (str)
-# total_time -> wav file total time
 class wav_spleeter(initial):
     def __init__(self):
         super().__init__()
@@ -41,7 +39,7 @@ class wav_spleeter(initial):
                 print("Done")
             elif end == 0 and (start in self.partnum):
                 for i in self.filelist:
-                    if int(i[0]) == start:
+                    if int(i.split("_")[0]) == start:
                         os.system(spl_command + i)
                 print("Done")
             elif start != 0 and end != 0:
@@ -50,8 +48,10 @@ class wav_spleeter(initial):
                 if start > end:
                     print("end must large then start!")
                 for i in self.filelist:
-                    if i[0] >= start and i[0] <= end:
+                    #if i[0] >= start and i[0] <= end:
+                    if start <= int(i.split("_")[0]) <= end:
                         os.system(spl_command + i)
+                        #print("good")
                 print("Done")
             else:
                 print("RangeError!2")
@@ -106,6 +106,7 @@ class wav_spleeter(initial):
 if __name__ == '__main__':
     wavfile = wav_spleeter()
     wavfile.folderinfo()
+    #wavfile.spleeter(2, 14)
     #wavfile.spleeter(0)
     #wavfile.spldata_to_path()
 
