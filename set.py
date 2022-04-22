@@ -4,10 +4,10 @@ import os
 
 
 path = ''
-
+azure_key = ''
 # code가 0이면 x_xxx.wav 형식으로 wav파일이름을 지어야 한다.
 # code가 1이면 상관없음
-code =1
+code =0
 
 
 class initial():
