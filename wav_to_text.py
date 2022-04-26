@@ -20,7 +20,7 @@ import datetime
     
 '''
 class wav_to_text(initial):
-    def __init__(self, choose_api):
+    def __init__(self, choose_api, start, end=0):
         super().__init__()
         self.output = {}
         self.mode=''
@@ -35,7 +35,7 @@ class wav_to_text(initial):
             self.google_cloud_stt()
             self.write_json(2)
         elif choose_api==3:
-            self.azure_stt()
+            self.azure_stt(start, end)
             self.write_json(3)
         else:
             print("plz choose api -> 1 or 2 or 3")
@@ -44,9 +44,9 @@ class wav_to_text(initial):
     def googleweb(self):
         r = sr.Recognizer()
         print(self.trans_list)
-        self.trans_list = ["9_022_spl.wav"]
-        for l in self.trans_list:
-            korean_audio = sr.AudioFile(self.trans_path + l)
+        #self.trans_list = ["9_022_spl.wav"]
+        for i in self.trans_list:
+            korean_audio = sr.AudioFile(self.trans_path + i)
             with korean_audio as source:
                 audio = r.record(source)
 
@@ -54,15 +54,22 @@ class wav_to_text(initial):
                 text = r.recognize_google(audio_data=audio, language='ja-JP')
             except sr.UnknownValueError:
                 text = 'this file is too short'
-            self.output[l]=text
-            print(text)
+            self.output[i]=text
+            print(f'googleweb : {i} = {text}')
 
 
     # 2.
-    def google_cloud_stt(self):
+    def google_cloud_stt(self, start, end=0):
         """Transcribe the given audio file."""
-        self.trans_list = ["9_022_spl.wav"]
-        for i in self.trans_list:
+
+        if start == 0:
+            list = self.trans_list
+        elif end==0 and (start in self.partnum):
+            list = [wav for wav in self.trans_list if start==int(wav.split('_')[0])]
+        elif start!=0 and end!=0:
+            list = [wav for wav in self.trans_list if start <= int(wav.split('_')[0]) <= end]
+
+        for i in list:
             text = ""
             client = speech_v1.SpeechClient()
             with io.open(self.trans_path+i, "rb") as audio_file:
@@ -78,7 +85,10 @@ class wav_to_text(initial):
             )
 
             response = client.recognize(config=config, audio=audio)
-            # print(response.results)
+            print(response.results)
+            if response.results == []:
+                text = "None"
+                self.output[i] = text
             # Each result is for a consecutive portion of the audio. Iterate through
             # them to get the transcripts for the entire audio file.
             for result in response.results:
@@ -89,13 +99,19 @@ class wav_to_text(initial):
 
 
 
+
     # 3.
-    def azure_stt(self):
+    def azure_stt(self, start=0, end=0):
+        if start == 0:
+            list = self.trans_list
+        elif end==0 and (start in self.partnum):
+            list = [wav for wav in self.trans_list if start==int(wav.split('_')[0])]
+        elif start!=0 and end!=0:
+            list = [wav for wav in self.trans_list if start <= int(wav.split('_')[0]) <= end]
         speech_config = speechsdk.SpeechConfig(subscription=azure_key, region="koreacentral")
         speech_config.speech_recognition_language = "ja-JP"
-        #self.trans_list = ["1_001_spl.wav","9_002_spl.wav","9_003_spl.wav","9_004_spl.wav","9_005_spl.wav","9_006_spl.wav"]
-        #self.trans_list = ["18_spl.wav"]
-        for i in self.trans_list:
+
+        for i in list:
             # To recognize speech from an audio file, use `filename` instead of `use_default_microphone`:
             text=""
             audio_config = speechsdk.audio.AudioConfig(
@@ -110,12 +126,15 @@ class wav_to_text(initial):
                 self.output[i] = text
             elif speech_recognition_result.reason == speechsdk.ResultReason.NoMatch:
                 print("No speech could be recognized: {}".format(speech_recognition_result.no_match_details))
+                self.output[i] = 'nomatch error'
             elif speech_recognition_result.reason == speechsdk.ResultReason.Canceled:
                 cancellation_details = speech_recognition_result.cancellation_details
                 print("Speech Recognition canceled: {}".format(cancellation_details.reason))
+                self.output[i] = 'cancellation error'
                 if cancellation_details.reason == speechsdk.CancellationReason.Error:
                     print("Error details: {}".format(cancellation_details.error_details))
                     print("Did you set the speech resource key and region values?")
+                    self.output[i] = 'cancellation error2'
 
 
     def write_json(self, mode):
@@ -131,4 +150,4 @@ class wav_to_text(initial):
 
 
 if __name__=='__main__':
-    wav_to_text(3)
+    wav_to_text(3, 14, 38)
