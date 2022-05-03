@@ -106,7 +106,7 @@ class wav_spleeter(initial):
 if __name__ == '__main__':
     wavfile = wav_spleeter()
     wavfile.folderinfo()
-    #wavfile.spleeter(2, 14)
+    #wavfile.spleeter(35, 38)
     #wavfile.spleeter(0)
-    #wavfile.spldata_to_path()
+    wavfile.spldata_to_path()
 

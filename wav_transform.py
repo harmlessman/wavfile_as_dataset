@@ -13,16 +13,16 @@ def wavlist(p):
 class transform(initial):
     def __init__(self):
         super().__init__()
-
-    def trans(self):
+        self.spl_list = wavlist(self.spl_path)
+    def trans(self,rate=22050):
         try:
             os.mkdir(self.path+'\\trans')
         except FileExistsError:
-            print("")
+            pass
         for i in self.spl_list:
             sound = AudioSegment.from_wav(self.spl_path+i)
             sound = sound.set_channels(1)
-            sound = sound.set_frame_rate(22050)
+            sound = sound.set_frame_rate(rate)
             sound.export(self.trans_path+i, format="wav")
 
 

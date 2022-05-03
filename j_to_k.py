@@ -1,12 +1,6 @@
 
 # -*- coding: cp949 -*-
-'''
-    1. wav_spleeter에서 spleeter수행
-    2. wav_transform에서 wav파일 변형
-    3. speech에 대한 text 구하기
-    끝
 
-'''
 
 from set import azure_key, path
 import set
@@ -21,8 +15,8 @@ def readkey():
         set.azure_key = key[azure_key]
 
 def split(num):
-    l = ""
-    list = l.split("코피")
+    papago_text = ""
+    list = papago_text.split("코피")
     print(list)
     print(len(list))
 
@@ -57,7 +51,7 @@ def alltxt(num):
             if i.split("_")[0] == str(num):
                 #print(i.split("_")[1] + " : " + l[i])
                 #print(i+l[i]+" 선풍기")
-                print(l[i] + " 커피")
+                print(l[i] + "커피")
 
 
 if __name__=='__main__':

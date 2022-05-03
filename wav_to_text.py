@@ -1,15 +1,14 @@
 
+import set
 import speech_recognition as sr
 import os
 from google.cloud import speech_v1
 import io
 import azure.cognitiveservices.speech as speechsdk
 import json
-from set import initial
 import sys
-from set import azure_key
 import datetime
-
+from set import initial
 '''
     wavfile 각각의 text를 추출하는 class.
     저장 형식은 json
@@ -19,14 +18,16 @@ import datetime
     3. azure stt (유료, azure 계정생성 후 '리소스 만들기' 후 키를 받아야함, 제일 성능좋음)
     
 '''
+def wavlist(p):
+    return sorted([wav for wav in os.listdir(p) if wav.endswith(".wav")], key=lambda x: int(x.split('_')[0]))
+
 class wav_to_text(initial):
-    def __init__(self, choose_api, start, end=0):
+    def __init__(self, choose_api, start=0, end=0):
         super().__init__()
         self.output = {}
         self.mode=''
-        self.trans_list = [wav for wav in os.listdir(self.trans_path) if wav.endswith(".wav")]
-        self.trans_list = sorted(self.trans_list, key=lambda x: int(x.split('_')[0]))
-        print(self.spl_list)
+        self.trans_list = wavlist(self.trans_path)
+        self.spl_list = wavlist(self.spl_path)
 
         if choose_api==1:
             self.googleweb()
@@ -59,7 +60,7 @@ class wav_to_text(initial):
 
 
     # 2.
-    def google_cloud_stt(self, start, end=0):
+    def google_cloud_stt(self, start=0, end=0):
         """Transcribe the given audio file."""
 
         if start == 0:
@@ -108,7 +109,7 @@ class wav_to_text(initial):
             list = [wav for wav in self.trans_list if start==int(wav.split('_')[0])]
         elif start!=0 and end!=0:
             list = [wav for wav in self.trans_list if start <= int(wav.split('_')[0]) <= end]
-        speech_config = speechsdk.SpeechConfig(subscription=azure_key, region="koreacentral")
+        speech_config = speechsdk.SpeechConfig(subscription=set.azure_key, region="koreacentral")
         speech_config.speech_recognition_language = "ja-JP"
 
         for i in list:
