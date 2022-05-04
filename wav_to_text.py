@@ -22,18 +22,23 @@ def wavlist(p):
     return sorted([wav for wav in os.listdir(p) if wav.endswith(".wav")], key=lambda x: int(x.split('_')[0]))
 
 class wav_to_text(initial):
-    def __init__(self, choose_api, start=0, end=0):
+    def __init__(self, choose_api, lang, start=0, end=0):
         super().__init__()
         self.output = {}
         self.mode=''
-        self.trans_list = wavlist(self.trans_path)
-        self.spl_list = wavlist(self.spl_path)
+        if self.code==0:
+            self.trans_list = wavlist(self.trans_path)
+            self.spl_list = wavlist(self.spl_path)
+        elif self.code==1:
+            self.trans_list = sorted([wav for wav in os.listdir(self.trans_path) if wav.endswith(".wav")])
+            self.spl_list = sorted([wav for wav in os.listdir(self.spl_path) if wav.endswith(".wav")])
+        self.lang = lang
 
         if choose_api==1:
-            self.googleweb()
+            self.googleweb(start, end)
             self.write_json(1)
         elif choose_api==2:
-            self.google_cloud_stt()
+            self.google_cloud_stt(start, end)
             self.write_json(2)
         elif choose_api==3:
             self.azure_stt(start, end)
@@ -42,17 +47,22 @@ class wav_to_text(initial):
             print("plz choose api -> 1 or 2 or 3")
 
     # 1. 공짜
-    def googleweb(self):
+    def googleweb(self, start=0, end=0):
+        if start == 0 or self.code==1:
+            list = self.trans_list
+        elif end==0 and (start in self.partnum):
+            list = [wav for wav in self.trans_list if start==int(wav.split('_')[0])]
+        elif start!=0 and end!=0:
+            list = [wav for wav in self.trans_list if start <= int(wav.split('_')[0]) <= end]
+
         r = sr.Recognizer()
-        print(self.trans_list)
-        #self.trans_list = ["9_022_spl.wav"]
-        for i in self.trans_list:
+        for i in list:
             korean_audio = sr.AudioFile(self.trans_path + i)
             with korean_audio as source:
                 audio = r.record(source)
 
             try:
-                text = r.recognize_google(audio_data=audio, language='ja-JP')
+                text = r.recognize_google(audio_data=audio, language=self.lang)
             except sr.UnknownValueError:
                 text = 'this file is too short'
             self.output[i]=text
@@ -63,7 +73,7 @@ class wav_to_text(initial):
     def google_cloud_stt(self, start=0, end=0):
         """Transcribe the given audio file."""
 
-        if start == 0:
+        if start == 0 or self.code==1:
             list = self.trans_list
         elif end==0 and (start in self.partnum):
             list = [wav for wav in self.trans_list if start==int(wav.split('_')[0])]
@@ -81,7 +91,7 @@ class wav_to_text(initial):
             config = speech_v1.RecognitionConfig(
                 encoding=speech_v1.RecognitionConfig.AudioEncoding.LINEAR16,
                 sample_rate_hertz=22050,
-                language_code="ja-JP",
+                language_code=self.lang,
                 audio_channel_count=1,
             )
 
@@ -103,14 +113,14 @@ class wav_to_text(initial):
 
     # 3.
     def azure_stt(self, start=0, end=0):
-        if start == 0:
+        if start == 0 or self.code==1:
             list = self.trans_list
         elif end==0 and (start in self.partnum):
             list = [wav for wav in self.trans_list if start==int(wav.split('_')[0])]
         elif start!=0 and end!=0:
             list = [wav for wav in self.trans_list if start <= int(wav.split('_')[0]) <= end]
         speech_config = speechsdk.SpeechConfig(subscription=set.azure_key, region="koreacentral")
-        speech_config.speech_recognition_language = "ja-JP"
+        speech_config.speech_recognition_language = self.lang
 
         for i in list:
             # To recognize speech from an audio file, use `filename` instead of `use_default_microphone`:
@@ -146,7 +156,7 @@ class wav_to_text(initial):
             2 : "google_cloud_stt",
             3 : "azure_stt"
         }
-        with open(f'{modic[mode]}_{dtime.strftime(dformat)}.json', 'w+', encoding="utf-8") as f:
+        with open(f'{self.spl_path}\\{modic[mode]}_{dtime.strftime(dformat)}.json', 'w+', encoding="utf-8") as f:
             json.dump(self.output, f, ensure_ascii=False, indent='\t')
 
 

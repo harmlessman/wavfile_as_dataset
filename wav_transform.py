@@ -13,7 +13,10 @@ def wavlist(p):
 class transform(initial):
     def __init__(self):
         super().__init__()
-        self.spl_list = wavlist(self.spl_path)
+        if self.code==0:
+            self.spl_list = wavlist(self.spl_path)
+        elif self.code==1:
+            self.spl_list = sorted([wav for wav in os.listdir(self.spl_path) if wav.endswith(".wav")])
     def trans(self,rate=22050):
         try:
             os.mkdir(self.path+'\\trans')

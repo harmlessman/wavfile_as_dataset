@@ -1,10 +1,10 @@
 
-# -*- coding: cp949 -*-
+
 '''
-    1. wav_spleeter¿¡¼­ spleeter¼öÇà
-    2. wav_transform¿¡¼­ wavÆÄÀÏ º¯Çü
-    3. speech¿¡ ´ëÇÑ text ±¸ÇÏ±â
-    ³¡
+    1. wav_spleeterì—ì„œ spleeterìˆ˜í–‰
+    2. wav_transformì—ì„œ wavíŒŒì¼ ë³€í˜•
+    3. speechì— ëŒ€í•œ text êµ¬í•˜ê¸°
+    ë
 
 '''
 
@@ -13,10 +13,13 @@ import set
 import json
 import os
 import datetime
+import time
 
 import wav_spleeter as spl
 import wav_to_text as stt
 import wav_transform as trans
+
+spl_time = 20
 
 
 def readkey():
@@ -30,79 +33,157 @@ def intro():
 
 
 if __name__=='__main__':
-    print("¾È³çÇÏ¼¼¿ä. wavfileÀ» tts¿ë µ¥ÀÌÅÍ ¼Â À¸·Î ¸¸µé¾î µå¸®´Â ÇÁ·Î±×·¥ÀÔ´Ï´Ù.")
+    print("ì•ˆë…•í•˜ì„¸ìš”. wavfileì„ ttsìš© ë°ì´í„° ì…‹ ìœ¼ë¡œ ë§Œë“¤ì–´ ë“œë¦¬ëŠ” í”„ë¡œê·¸ë¨ì…ë‹ˆë‹¤.")
     readkey()
     while(True):
-        print("‚n‚n¿øÇÏ½Ã´Â ÀÛ¾÷À» ¼±ÅÃ ÇÏ½Ê½Ã¿À.")
-        print("1. ºü¸¥ ½ÃÀÛ")
-        print("2. ¹è°æÀ½¾Ç Á¦°Å")
-        print("3. ÆÄÀÏ º¯Çü")
-        print("4. STTÀÛ¾÷")
-        print("5. japanese to korean(¿¹Á¤)")
-        print("0. ³ª°¡±â")
-        menu = input("ÀÛ¾÷À» ¼±ÅÃÇÏ¼¼¿ä ==> ")
+        print("\n\nì›í•˜ì‹œëŠ” ì‘ì—…ì„ ì„ íƒ í•˜ì‹­ì‹œì˜¤.")
+        print("1. ë¹ ë¥¸ ì‹œì‘")
+        print("2. ë°°ê²½ìŒì•… ì œê±°")
+        print("3. íŒŒì¼ ë³€í˜•")
+        print("4. STTì‘ì—…")
+        print("5. japanese to korean(ì˜ˆì •)")
+        print("0. ë‚˜ê°€ê¸°")
+        menu = input("ì‘ì—…ì„ ì„ íƒí•˜ì„¸ìš” ==> ")
         task = int(menu) if menu.isdigit() else -1
+
+        print("datasetì´ ë“¤ì–´ìˆëŠ” ë””ë ‰í† ë¦¬ì˜ ê²½ë¡œë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”.")
+        print("enterë¥¼ ëˆ„ë¥´ë©´ key.jsonì— ìˆëŠ” ê²½ë¡œì—ì„œ ì‘ì—…ì´ ì§„í–‰ë©ë‹ˆë‹¤.")
+        p = input("path : ")
+        if p != '':
+            set.path = p
+        print(f'path : {set.path}')
+
+        print("\nSTTì‘ì—…ì—ì„œ ì‚¬ìš©í•  apiì˜ keyê°€ ìˆë‹¤ë©´ keyë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”")
+        print("enterë¥¼ ëˆ„ë¥´ë©´ key.jsonì— ìˆëŠ” keyê°’ì„ ê°€ì ¸ì˜µë‹ˆë‹¤.")
+        k = input("api_key : ")
+        if k != '':
+            set.azure_key = k
+        print(f'api_key : {set.azure_key}')
+
         if task ==1:
-            print("ºü¸¥½ÃÀÛÀ» ½Ç½ÃÇÕ´Ï´Ù.")
-
-            print("datasetÀÌ µé¾îÀÖ´Â µğ·ºÅä¸®ÀÇ °æ·Î¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.")
-            print("enter¸¦ ´©¸£¸é key.json¿¡ ÀÖ´Â °æ·Î¿¡¼­ ÀÛ¾÷ÀÌ ÁøÇàµË´Ï´Ù.")
-            p = input("path : ")
-            if p!='':
-                set.path = p
-            print(f'path : {set.path}')
-
-            print("STTÀÛ¾÷¿¡¼­ »ç¿ëÇÒ apiÀÇ key°¡ ÀÖ´Ù¸é key¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä")
-            print("enter¸¦ ´©¸£¸é key.json¿¡ ÀÖ´Â key°ªÀ» °¡Á®¿É´Ï´Ù.")
-            k = input("api_key : ")
-            if k != '':
-                set.azure_key = k
-            print(f'api_key : {set.azure_key}')
+            print("ë¹ ë¥¸ì‹œì‘ì„ ì‹¤ì‹œí•©ë‹ˆë‹¤.")
 
             fir = spl.wav_spleeter()
-            input("¹è°æÀ½¾Ç Á¦°ÅÀÛ¾÷(spleeter)¿¡´Â ½Ã°£ÀÌ ´Ù¼Ò ¼Ò¿äµË´Ï´Ù. ÀÎÁöÇÏ¼ÌÀ¸¸é ¿£ÅÍ¸¦ ´­·¯ÁÖ¼¼¿ä")
+            print(f'ì‘ì—…í•´ì•¼ í•  íŒŒì¼ì˜ ìˆ˜ëŠ” {fir.filenum}ê°œ ì…ë‹ˆë‹¤.')
+            print(f'ë°°ê²½ìŒì•… ì œê±°ì‘ì—…(spleeter)ì—ëŠ” ì‹œê°„ì´ ë‹¤ì†Œ ì†Œìš”ë©ë‹ˆë‹¤. ')
+            print(f'ì˜ˆìƒ ì†Œìš”ì‹œê°„ì€ ì•½ {datetime.timedelta(seconds=fir.filenum*spl_time)}ì…ë‹ˆë‹¤.')
+            input("ì¸ì§€í•˜ì…¨ìœ¼ë©´ ì—”í„°ë¥¼ ëˆŒëŸ¬ì£¼ì„¸ìš”")
             fir.folderinfo()
             fir.spleeter(0)
             fir.spldata_to_path()
-            print("¹è°æÀ½¾Ç Á¦°Å ÀÛ¾÷ÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù.")
-            print("¹è°æÀ½¾ÇÀÌ Á¦°ÅµÈ wavÆÄÀÏÀº spleeter_outÆÄÀÏ¿¡ µé¾îÀÖ½À´Ï´Ù.")
+            print("\në°°ê²½ìŒì•… ì œê±° ì‘ì—…ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.")
+            print("ë°°ê²½ìŒì•…ì´ ì œê±°ëœ wavíŒŒì¼ì€ spleeter_outíŒŒì¼ì— ë“¤ì–´ìˆìŠµë‹ˆë‹¤.")
 
-            print("wavÆÄÀÏ º¯È¯ÀÛ¾÷À» ½ÃÀÛÇÕ´Ï´Ù.")
-            print("º¯È¯ÀÛ¾÷¿¡¼­´Â wavÆÄÀÏÀÇ channels¿Í sampling rate¸¦ º¯È¯ÇÕ´Ï´Ù.")
-            rate = input("¿øÇÏ´Â sampling rate¸¦ ÀÔ·ÂÇÏ¼¼¿ä. ¿£ÅÍ¸¦ ´©¸£½Ã¸é default°ªÀÎ 22050À¸·Î º¯È¯ÇÕ´Ï´Ù.")
+            print("\nwavíŒŒì¼ ë³€í™˜ì‘ì—…ì„ ì‹œì‘í•©ë‹ˆë‹¤.")
+            print("ë³€í™˜ì‘ì—…ì—ì„œëŠ” wavíŒŒì¼ì˜ channelsì™€ sampling rateë¥¼ ë³€í™˜í•©ë‹ˆë‹¤.")
+            rate = input("ì›í•˜ëŠ” sampling rateë¥¼ ì…ë ¥í•˜ì„¸ìš”. ì—”í„°ë¥¼ ëˆ„ë¥´ì‹œë©´ defaultê°’ì¸ 22050ìœ¼ë¡œ ë³€í™˜í•©ë‹ˆë‹¤.")
             sec = trans.transform()
             sec.trans() if rate is '' else sec.trans(rate)
-            print("º¯È¯ÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù.")
 
-            print("STTÀÛ¾÷À» ½ÃÀÛÇÕ´Ï´Ù.")
-            print("STTÀÛ¾÷¿¡¼­´Â wavÆÄÀÏµéÀÇ À½¼ºÀ» text·Î º¯È¯ÇÏ¿© jsonÆÄÀÏ¿¡ ÀúÀåÇÕ´Ï´Ù.")
-            print("»ç¿ëÇÒ api¸¦ ¼±ÅÃÇÏ¼¼¿ä. 1¹øÀº º°µµÀÇ key°¡ ÇÊ¿ä¾ø½À´Ï´Ù.")
+            print("\në³€í™˜ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.")
+
+            print("\nSTTì‘ì—…ì„ ì‹œì‘í•©ë‹ˆë‹¤.")
+            print("STTì‘ì—…ì—ì„œëŠ” wavíŒŒì¼ë“¤ì˜ ìŒì„±ì„ textë¡œ ë³€í™˜í•˜ì—¬ jsoníŒŒì¼ì— ì €ì¥í•©ë‹ˆë‹¤.")
+            print("ì‚¬ìš©í•  apië¥¼ ì„ íƒí•˜ì„¸ìš”. 1ë²ˆì€ ë³„ë„ì˜ keyê°€ í•„ìš”ì—†ìŠµë‹ˆë‹¤.")
             print("1. google web speech")
             print("2. google cloud speech")
             print("3. azure stt")
             api = input("==>")
-            thr = stt.wav_to_text(choose_api = int(api))
-            print("sttÀÛ¾÷ÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù.")
-            print("jsonÆÄÀÏÀ» È®ÀÎÇØÁÖ¼¼¿ä.")
+            if int(api) not in [1,2,3]:
+                print("ì˜¬ë°”ë¥¸ ìˆ«ìë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”.")
+                continue
 
+            print(f'\nì–¸ì–´ë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”.')
+            print(f'https://docs.microsoft.com/ko-kr/azure/cognitive-services/speech-service/language-support?tabs=speechtotext ë§í¬ì—ì„œ ì°¸ê³ í•˜ì‹œë©´ ë©ë‹ˆë‹¤.')
+            print(f'í•œêµ­ì–´ : ko-KR, ì˜ì–´ : en-US, ì¼ë³¸ì–´ : ja-JP......')
+            lang = input("==>")
+            thr = stt.wav_to_text(choose_api = int(api), lang = lang)
+            print("\nsttì‘ì—…ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.")
 
+            print("\njsoníŒŒì¼ì„ í™•ì¸í•´ì£¼ì„¸ìš”.")
 
 
         elif task ==2:
-            pass
+            print("ë°°ê²½ìŒì•… ì œê±°ê¸°ëŠ¥ì„ ì„ íƒí•˜ì…¨ìŠµë‹ˆë‹¤.")
+            fir = spl.wav_spleeter()
+            print("ë²”ìœ„ë¥¼ ì„ íƒí•˜ì„¸ìš”")
+            print("0 -> wavíŒŒì¼ ì „ì²´\nnum1 -> num1íšŒì°¨ë§Œ\nnum1 num2 -> num1~num2íšŒì°¨ê¹Œì§€ ")
+            num = input("ë²”ìœ„ë¥¼ ì…ë ¥í•˜ì‹œì˜¤.").split()
+            if len(num)==1:
+                print(f'ì‘ì—…í•´ì•¼ í•  íŒŒì¼ì˜ ìˆ˜ëŠ” {len([i for i in fir.filelist if int(i.split("_")[0])==int(num[0])])}ê°œ ì…ë‹ˆë‹¤.')
+                print(f'ë°°ê²½ìŒì•… ì œê±°ì‘ì—…(spleeter)ì—ëŠ” ì‹œê°„ì´ ë‹¤ì†Œ ì†Œìš”ë©ë‹ˆë‹¤. ')
+                print(f'ì˜ˆìƒ ì†Œìš”ì‹œê°„ì€ ì•½ {datetime.timedelta(seconds=len([i for i in fir.filelist if int(i.split("_")[0])==int(num[0])]) * spl_time)}ì…ë‹ˆë‹¤.')
+                input("ì¸ì§€í•˜ì…¨ìœ¼ë©´ ì—”í„°ë¥¼ ëˆŒëŸ¬ì£¼ì„¸ìš”")
+                fir.folderinfo()
+                fir.spleeter(int(num[0]))
+                fir.spldata_to_path()
+                print("\në°°ê²½ìŒì•… ì œê±° ì‘ì—…ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.")
+                print("ë°°ê²½ìŒì•…ì´ ì œê±°ëœ wavíŒŒì¼ì€ spleeter_outíŒŒì¼ì— ë“¤ì–´ìˆìŠµë‹ˆë‹¤.")
+            elif len(num)==2:
+                print(f'ì‘ì—…í•´ì•¼ í•  íŒŒì¼ì˜ ìˆ˜ëŠ” {len([i for i in fir.filelist if int(num[0])<=int(i.split("_")[0])<=int(num[1])])}ê°œ ì…ë‹ˆë‹¤.')
+                print(f'ë°°ê²½ìŒì•… ì œê±°ì‘ì—…(spleeter)ì—ëŠ” ì‹œê°„ì´ ë‹¤ì†Œ ì†Œìš”ë©ë‹ˆë‹¤. ')
+                print(f'ì˜ˆìƒ ì†Œìš”ì‹œê°„ì€ ì•½ {datetime.timedelta(seconds=len([i for i in fir.filelist if int(num[0])<=int(i.split("_")[0])<=int(num[1])]) * spl_time)}ì…ë‹ˆë‹¤.')
+                input("ì¸ì§€í•˜ì…¨ìœ¼ë©´ ì—”í„°ë¥¼ ëˆŒëŸ¬ì£¼ì„¸ìš”")
+                fir.folderinfo()
+                fir.spleeter(int(num[0]), int(num[1]))
+                fir.spldata_to_path()
+                print("\në°°ê²½ìŒì•… ì œê±° ì‘ì—…ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.")
+                print("ë°°ê²½ìŒì•…ì´ ì œê±°ëœ wavíŒŒì¼ì€ spleeter_outíŒŒì¼ì— ë“¤ì–´ìˆìŠµë‹ˆë‹¤.")
+            else:
+                print("ë²”ìœ„ì— ë§ê²Œ ì…ë ¥í•´ì£¼ì„¸ìš”.")
+
         elif task ==3:
-            pass
+            print("wavíŒŒì¼ ë³€í™˜ ì‘ì—…ì„ ì„ íƒí•˜ì…¨ìŠµë‹ˆë‹¤.")
+            print("\nwavíŒŒì¼ ë³€í™˜ì‘ì—…ì„ ì‹œì‘í•©ë‹ˆë‹¤.")
+            print("ë³€í™˜ì‘ì—…ì—ì„œëŠ” wavíŒŒì¼ì˜ channelsì™€ sampling rateë¥¼ ë³€í™˜í•©ë‹ˆë‹¤.")
+            rate = input("ì›í•˜ëŠ” sampling rateë¥¼ ì…ë ¥í•˜ì„¸ìš”. ì—”í„°ë¥¼ ëˆ„ë¥´ì‹œë©´ defaultê°’ì¸ 22050ìœ¼ë¡œ ë³€í™˜í•©ë‹ˆë‹¤.")
+            sec = trans.transform()
+            sec.trans() if rate is '' else sec.trans(rate)
+            print("\në³€í™˜ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.")
+
         elif task ==4:
-            pass
+            print("\nSTTì‘ì—…ì„ ì‹œì‘í•©ë‹ˆë‹¤.")
+            print("STTì‘ì—…ì—ì„œëŠ” wavíŒŒì¼ë“¤ì˜ ìŒì„±ì„ textë¡œ ë³€í™˜í•˜ì—¬ jsoníŒŒì¼ì— ì €ì¥í•©ë‹ˆë‹¤.")
+
+            print("ì‚¬ìš©í•  apië¥¼ ì„ íƒí•˜ì„¸ìš”. 1ë²ˆì€ ë³„ë„ì˜ keyê°€ í•„ìš”ì—†ìŠµë‹ˆë‹¤.")
+            print("1. google web speech")
+            print("2. google cloud speech")
+            print("3. azure stt")
+            api = input("==>")
+            if int(api) not in [1,2,3]:
+                print("ì˜¬ë°”ë¥¸ ìˆ«ìë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”.")
+                continue
+            print(f'\nì–¸ì–´ë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”.')
+            print(f'https://docs.microsoft.com/ko-kr/azure/cognitive-services/speech-service/language-support?tabs=speechtotext ë§í¬ì—ì„œ ì°¸ê³ í•˜ì‹œë©´ ë©ë‹ˆë‹¤.')
+            print(f'í•œêµ­ì–´ : ko-KR, ì˜ì–´ : en-US, ì¼ë³¸ì–´ : ja-JP......')
+            lang = input("==>")
+
+            print("ë²”ìœ„ë¥¼ ì„ íƒí•˜ì„¸ìš”")
+            print("0 -> wavíŒŒì¼ ì „ì²´\nnum1 -> num1íšŒì°¨ë§Œ\nnum1 num2 -> num1~num2íšŒì°¨ê¹Œì§€ ")
+            num = input("ë²”ìœ„ë¥¼ ì…ë ¥í•˜ì‹œì˜¤.").split()
+
+            if len(num)==1:
+                thr = stt.wav_to_text(choose_api=int(api), lang=lang, start=int(num[0]))
+                print("\nsttì‘ì—…ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.")
+
+                print("\njsoníŒŒì¼ì„ í™•ì¸í•´ì£¼ì„¸ìš”.")
+            elif len(num)==2:
+                thr = stt.wav_to_text(choose_api=int(api), lang=lang, start=int(num[0]), end=int(num[1]))
+                print("\nsttì‘ì—…ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.")
+
+                print("\njsoníŒŒì¼ì„ í™•ì¸í•´ì£¼ì„¸ìš”.")
+            else:
+                print("ë²”ìœ„ì— ë§ê²Œ ì…ë ¥í•´ì£¼ì„¸ìš”.")
+
         elif task ==5:
-            pass
+            print("ë¬¸ì„œ ì°¸ì¡° ë¶€íƒë“œë¦½ë‹ˆë‹¤.")
         elif task ==0:
-            print("ÀÌ¿ëÇØÁÖ¼Å¼­ °¨»çÇÕ´Ï´Ù. ¤²¤²")
+            print("ì´ìš©í•´ì£¼ì…”ì„œ ê°ì‚¬í•©ë‹ˆë‹¤. ã…‚ã…‚")
             exit()
         elif task == -1:
-            print("¼ıÀÚ¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä")
+            print("ìˆ«ìë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”")
         else:
-            prnit("0 ~ 5 Áß¿¡¼­ ÇÏ³ª ¼±ÅÃÇØÁÖ¼¼¿ä")
+            print("0 ~ 5 ì¤‘ì—ì„œ í•˜ë‚˜ ì„ íƒí•´ì£¼ì„¸ìš”")
 
 
 

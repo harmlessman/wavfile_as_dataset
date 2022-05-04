@@ -3,3 +3,4 @@ google-cloud-speech
 pydub
 SpeechRecognition
 spleeter
+azure-cognitiveservices-speech

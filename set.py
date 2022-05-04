@@ -2,11 +2,11 @@ import os
 
 
 
-path = 'C:\\Users\\82109\\Desktop\\wavfile_as_dataest\\dataset_emilia'
+path = '.\\'
 azure_key = ''
 # code가 0이면 x_xxx.wav 형식으로 wav파일이름을 지어야 한다.
 # code가 1이면 상관없음
-code =0
+code =1
 
 def wavlist(p):
     return sorted([wav for wav in os.listdir(p) if wav.endswith(".wav")], key=lambda x: int(x.split('_')[0]))
@@ -31,12 +31,11 @@ class initial():
         elif code==1:
             self.path = path
             self.spl_path = path + "\\spleeter_out\\"
-            self.filelist = [wav for wav in os.listdir(path) if wav.endswith(".wav")]
+            self.filelist = [wav for wav in os.listdir(self.path) if wav.endswith(".wav")]
             self.filenum = len(self.filelist)
             self.partnum = None
-            os.chdir(self.path)
             self.trans_path = self.path + "\\trans\\"
-            self.spl_list = [wav for wav in os.listdir(self.spl_path) if wav.endswith(".wav")]
+            #print(self.filelist)
 
 
 initial()
