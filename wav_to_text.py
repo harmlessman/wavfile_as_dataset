@@ -156,8 +156,14 @@ class wav_to_text(initial):
             2 : "google_cloud_stt",
             3 : "azure_stt"
         }
-        with open(f'{self.spl_path}\\{modic[mode]}_{dtime.strftime(dformat)}.json', 'w+', encoding="utf-8") as f:
-            json.dump(self.output, f, ensure_ascii=False, indent='\t')
+        if set.textsetname not in os.listdir(self.spl_path):
+            with open(f'{self.spl_path}\\{set.textsetname}', 'w+', encoding="utf-8") as f:
+                json.dump(self.output, f, ensure_ascii=False, indent='\t')
+                print(f'\n{set.textsetname}에 저장되었습니다.')
+        else:
+            with open(f'{self.spl_path}\\{modic[mode]}_{dtime.strftime(dformat)}.json', 'w+', encoding="utf-8") as f:
+                json.dump(self.output, f, ensure_ascii=False, indent='\t')
+                print(f'\n{modic[mode]}_{dtime.strftime(dformat)}.json에 저장되었습니다.')
 
 
 if __name__=='__main__':

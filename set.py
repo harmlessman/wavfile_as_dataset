@@ -1,12 +1,11 @@
 import os
 
-
-
 path = '.\\'
 azure_key = ''
 # code가 0이면 x_xxx.wav 형식으로 wav파일이름을 지어야 한다.
 # code가 1이면 상관없음
-code =1
+code =0
+textsetname = 'text.json'
 
 def wavlist(p):
     return sorted([wav for wav in os.listdir(p) if wav.endswith(".wav")], key=lambda x: int(x.split('_')[0]))
@@ -35,7 +34,7 @@ class initial():
             self.filenum = len(self.filelist)
             self.partnum = None
             self.trans_path = self.path + "\\trans\\"
-            #print(self.filelist)
+
 
 
 initial()

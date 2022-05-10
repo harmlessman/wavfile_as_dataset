@@ -46,19 +46,20 @@ if __name__=='__main__':
         menu = input("작업을 선택하세요 ==> ")
         task = int(menu) if menu.isdigit() else -1
 
-        print("dataset이 들어있는 디렉토리의 경로를 입력해주세요.")
-        print("enter를 누르면 key.json에 있는 경로에서 작업이 진행됩니다.")
-        p = input("path : ")
-        if p != '':
-            set.path = p
-        print(f'path : {set.path}')
+        if task in [1,2,3,4]:
+            print("dataset이 들어있는 디렉토리의 경로를 입력해주세요.")
+            print("enter를 누르면 key.json에 있는 경로에서 작업이 진행됩니다.")
+            p = input("path : ")
+            if p != '':
+                set.path = p
+            print(f'path : {set.path}')
 
-        print("\nSTT작업에서 사용할 api의 key가 있다면 key를 입력해주세요")
-        print("enter를 누르면 key.json에 있는 key값을 가져옵니다.")
-        k = input("api_key : ")
-        if k != '':
-            set.azure_key = k
-        print(f'api_key : {set.azure_key}')
+            print("\nSTT작업에서 사용할 api의 key가 있다면 key를 입력해주세요")
+            print("enter를 누르면 key.json에 있는 key값을 가져옵니다.")
+            k = input("api_key : ")
+            if k != '':
+                set.azure_key = k
+            print(f'api_key : {set.azure_key}')
 
         if task ==1:
             print("빠른시작을 실시합니다.")
@@ -101,7 +102,6 @@ if __name__=='__main__':
             print("\nstt작업이 완료되었습니다.")
 
             print("\njson파일을 확인해주세요.")
-
 
         elif task ==2:
             print("배경음악 제거기능을 선택하셨습니다.")
