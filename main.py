@@ -18,6 +18,7 @@ import time
 import wav_spleeter as spl
 import wav_to_text as stt
 import wav_transform as trans
+import combine
 
 spl_time = 20
 
@@ -26,6 +27,8 @@ def readkey():
     with open('key.json', 'r', encoding="utf-8") as f:
         key = json.load(f)
         set.path=key['path']
+        if key['path']=="":
+            set.path = '.\\'
         set.azure_key = key['azure_key']
 
 def intro():
@@ -41,17 +44,19 @@ if __name__=='__main__':
         print("2. 배경음악 제거")
         print("3. 파일 변형")
         print("4. STT작업")
-        print("5. japanese to korean(예정)")
+        print("5. json파일 합치기")
+        print("6. japanese to korean(예정)")
         print("0. 나가기")
         menu = input("작업을 선택하세요 ==> ")
         task = int(menu) if menu.isdigit() else -1
 
-        if task in [1,2,3,4]:
+        if task in [1,2,3,4,5]:
             print("dataset이 들어있는 디렉토리의 경로를 입력해주세요.")
             print("enter를 누르면 key.json에 있는 경로에서 작업이 진행됩니다.")
             p = input("path : ")
             if p != '':
                 set.path = p
+
             print(f'path : {set.path}')
 
             print("\nSTT작업에서 사용할 api의 key가 있다면 key를 입력해주세요")
@@ -65,6 +70,10 @@ if __name__=='__main__':
             print("빠른시작을 실시합니다.")
 
             fir = spl.wav_spleeter()
+            if fir.filenum == 0:
+                print("wav파일이 존재하지 않습니다!")
+                print("path가 맞는지 확인하거나 path에 wav파일이 있는지 확인해주세요")
+                continue
             print(f'작업해야 할 파일의 수는 {fir.filenum}개 입니다.')
             print(f'배경음악 제거작업(spleeter)에는 시간이 다소 소요됩니다. ')
             print(f'예상 소요시간은 약 {datetime.timedelta(seconds=fir.filenum*spl_time)}입니다.')
@@ -175,13 +184,20 @@ if __name__=='__main__':
             else:
                 print("범위에 맞게 입력해주세요.")
 
-        elif task ==5:
+        elif task == 5:
+            combine.combinejson()
+            print(f'{set.textsetname}파일에 spleeter_out폴더 내에 있는 모든 json파일을 update했습니다.')
+
+        elif task ==6:
             print("문서 참조 부탁드립니다.")
+
         elif task ==0:
             print("이용해주셔서 감사합니다. ㅂㅂ")
             exit()
+
         elif task == -1:
             print("숫자를 입력해주세요")
+
         else:
             print("0 ~ 5 중에서 하나 선택해주세요")
 
