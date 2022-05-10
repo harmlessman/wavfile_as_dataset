@@ -6,30 +6,30 @@ import os
 import set
 
 
-spl_path = set.path + "\\spleeter_out"
-os.chdir(spl_path)
+def combinejson():
+  spl_path = set.path + "\\spleeter_out"
+  os.chdir(spl_path)
 
+  dic = {}
+  jlist = [j for j in os.listdir(spl_path) if j.endswith(".json")]
 
-dic = {}
-jlist = [j for j in os.listdir(spl_path) if j.endswith(".json")]
+  if set.textsetname not in jlist:
+    print("STT작업을 먼저 시행하신 후 combine을 해주십시오.")
 
-if set.textsetname not in jlist:
-  print("STT작업을 먼저 시행하신 후 combine을 해주십시오.")
-  
-jlist.remove(set.textsetname)
-if len(jlist)==0:
-  print("combine 작업을 진행 할 json파일이 없습니다.")
+  jlist.remove(set.textsetname)
+  if len(jlist) == 0:
+    print("combine 작업을 진행 할 json파일이 없습니다.")
 
-with open(set.textsetname, 'r', encoding='UTF8') as f:
-  dic = json.load(f)
+  with open(set.textsetname, 'r', encoding='UTF8') as f:
+    dic = json.load(f)
 
-for i in jlist:
-  with open(i, 'r', encoding='UTF8') as f:
-    dic.update(json.load(f))
-    
-print(dic)
-with open(set.textsetname, 'w', encoding='UTF8') as f:
-  json.dump(dic, f, ensure_ascii=False, indent=2)
+  for i in jlist:
+    with open(i, 'r', encoding='UTF8') as f:
+      dic.update(json.load(f))
 
-for i in jlist:
-  os.remove(i)
+  print(dic)
+  with open(set.textsetname, 'w', encoding='UTF8') as f:
+    json.dump(dic, f, ensure_ascii=False, indent=2)
+
+  for i in jlist:
+    os.remove(i)
