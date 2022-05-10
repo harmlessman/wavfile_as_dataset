@@ -13,14 +13,14 @@ os.chdir(spl_path)
 dic = {}
 jlist = [j for j in os.listdir(spl_path) if j.endswith(".json")]
 
-if 'textset.json' not in jlist:
+if set.textsetname not in jlist:
   print("STT작업을 먼저 시행하신 후 combine을 해주십시오.")
   
-jlist.remove('textset.json')
+jlist.remove(set.textsetname)
 if len(jlist)==0:
   print("combine 작업을 진행 할 json파일이 없습니다.")
 
-with open('textset.json', 'r', encoding='UTF8') as f:
+with open(set.textsetname, 'r', encoding='UTF8') as f:
   dic = json.load(f)
 
 for i in jlist:
@@ -28,7 +28,7 @@ for i in jlist:
     dic.update(json.load(f))
     
 print(dic)
-with open('textset.json', 'w', encoding='UTF8') as f:
+with open(set.textsetname, 'w', encoding='UTF8') as f:
   json.dump(dic, f, ensure_ascii=False, indent=2)
 
 for i in jlist:
