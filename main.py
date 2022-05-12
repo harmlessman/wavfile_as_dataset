@@ -28,7 +28,7 @@ def readkey():
         key = json.load(f)
         set.path=key['path']
         if key['path']=="":
-            set.path = '.\\'
+            set.path = '.\\dataset\\spleeter_out'
         set.azure_key = key['azure_key']
 
 def intro():
