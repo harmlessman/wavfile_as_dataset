@@ -15,11 +15,14 @@ def combinejson():
 
   if set.textsetname not in jlist:
     print("STT작업을 먼저 시행하신 후 combine을 해주십시오.")
-
+    return
+  
   jlist.remove(set.textsetname)
+  
   if len(jlist) == 0:
     print("combine 작업을 진행 할 json파일이 없습니다.")
-
+    return
+  
   with open(set.textsetname, 'r', encoding='UTF8') as f:
     dic = json.load(f)
 
