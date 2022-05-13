@@ -10,6 +10,9 @@ textsetname = 'text.json'
 def wavlist(p):
     return sorted([wav for wav in os.listdir(p) if wav.endswith(".wav")], key=lambda x: int(x.split('_')[0]))
 
+def wavlistnon(p):
+    return sorted([wav for wav in os.listdir(p) if wav.endswith(".wav")])
+
 # filelist -> wav file list (str)
 # filenum -> wav file count (int)
 # partnum -> ani part num list (int)
