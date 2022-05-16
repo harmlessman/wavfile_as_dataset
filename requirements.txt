@@ -1,6 +1,5 @@
-google.cloud
-google-cloud-speech
+spleeter
 pydub
 SpeechRecognition
-spleeter
 azure-cognitiveservices-speech
+google-cloud-speech

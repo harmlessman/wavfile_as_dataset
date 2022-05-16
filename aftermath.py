@@ -1,5 +1,7 @@
 import json
 import os
+
+import set
 import set as s
 import shutil
 
@@ -19,12 +21,12 @@ def combine():
     jlist = [j for j in os.listdir(s.path) if j.endswith(".json")]
 
     if s.textsetname not in jlist:
-        print("STT작업을 먼저 시행하신 후 combine을 해주십시오.")
+        print(f'{set.textsetname} 파일이 존재하지 않습니다. STT작업을 먼저 시행하신 후 combine을 해주십시오.')
         return
 
     jlist.remove(s.textsetname)
     if len(jlist) == 0:
-        print("combine 작업을 진행 할 json파일이 없습니다.")
+        print(f'combine작업을 진행 할 {set.textsetname}이외의 json파일이 존재하지 않으므로 이 작업은 넘어갑니다.')
         return
 
     with open(s.textsetname, 'r', encoding='UTF8') as f:

@@ -8,17 +8,17 @@
 
 '''
 
-from set import azure_key, path
+
 import set
 import json
 import os
 import datetime
 import time
-
+import aftermath
 import wav_spleeter as spl
 import wav_to_text as stt
 import wav_transform as trans
-import combine
+
 
 spl_time = 20
 
@@ -28,7 +28,7 @@ def readkey():
         key = json.load(f)
         set.path=key['path']
         if key['path']=="":
-            set.path = '.\\dataset\\spleeter_out'
+            set.path = '.\\'
         set.azure_key = key['azure_key']
 
 def intro():
@@ -44,7 +44,7 @@ if __name__=='__main__':
         print("2. 배경음악 제거")
         print("3. 파일 변형")
         print("4. STT작업")
-        print("5. json파일 합치기")
+        print("5. 후처리 작업")
         print("6. japanese to korean(예정)")
         print("0. 나가기")
         menu = input("작업을 선택하세요 ==> ")
@@ -111,6 +111,26 @@ if __name__=='__main__':
             print("\nstt작업이 완료되었습니다.")
 
             print("\njson파일을 확인해주세요.")
+
+            print("\ncombine작업을 실시합니다.")
+            print(f'{set.path}에 존재하는 모든 json파일들을 {set.textsetname}에 update합니다.')
+            aftermath.combine()
+            print("완료되었습니다.")
+
+            print("\ndelete작업을 실시합니다.")
+            print("delete작업에서는 사용자가 적합하지 않은 wav파일을 삭제하면, 그에 맞게 json파일을 수정하는 일을 합니다.")
+            print()
+            print("우선 path의 trans dir에서 필요없는 wav파일을 삭제한 후 아무 키나 눌러주세요. 삭제 할 파일이 없으면 바로 아무 키나 눌러주세요.")
+            input()
+            aftermath.delete()
+            print("완료되었습니다.")
+
+            print("\ntarget작업을 실시합니다.")
+            aftermath.target()
+
+            print("모든 작업이 완료되었습니다.")
+            print("추가 작업을 원하시면 2,3,4,5를 선택하여 작업을 수행해주십시오.")
+            print("감사합니다.")
 
         elif task ==2:
             print("배경음악 제거기능을 선택하셨습니다.")
@@ -185,8 +205,38 @@ if __name__=='__main__':
                 print("범위에 맞게 입력해주세요.")
 
         elif task == 5:
-            combine.combinejson()
-            print(f'{set.textsetname}파일에 spleeter_out폴더 내에 있는 모든 json파일을 update했습니다.')
+            while(True):
+                print("\n\n후처리 작업을 실시합니다.")
+                print("후처리 작업은 combine, delete, target작업으로 이루어져 있습니다.")
+                print("1. combine작업은 stt작업의 결과물인 json파일들을 하나로 합치는 작업입니다.")
+                print("2. delete작업은 데이터로 사용하기 적합하지 않은 데이터를 삭제할 때 사용됩니다.")
+                print("이때 적합하지 않은 데이터인지는 본인이 판단해야 합니다.")
+                print("3. target작업은 dataset이 위치해야 하는 위치로 이동합니다. json파일에도 반영됩니다.")
+                print("0. 후처리 작업을 종료합니다.")
+                menu2 = input("작업을 선택하세요 ==> ")
+                task2 = int(menu2) if menu2.isdigit() else -1
+                if task2 == 1:
+                    print("combine작업을 실시합니다.")
+                    print(f'{set.path}에 존재하는 모든 json파일들을 {set.textsetname}에 update합니다.')
+                    aftermath.combine()
+                    print("완료되었습니다.")
+                elif task2 == 2:
+                    print("delete작업을 실시합니다.")
+                    print("delete작업에서는 사용자가 적합하지 않은 wav파일을 삭제하면, 그에 맞게 json파일을 수정하는 일을 합니다.")
+                    print()
+                    print("우선 path의 trans dir에서 필요없는 wav파일을 삭제한 후 아무 키나 눌러주세요.")
+                    input()
+                    aftermath.delete()
+                    print("완료되었습니다.")
+                elif task2 == 3:
+                    print("target작업을 실시합니다.")
+                    aftermath.target()
+                elif task2 == 0:
+                    break
+                elif task2 == -1:
+                    print("숫자를 입력해주세요.")
+                else:
+                    print("1, 2, 3 중 하나를 선택해주세요.")
 
         elif task ==6:
             print("문서 참조 부탁드립니다.")
