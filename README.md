@@ -16,6 +16,20 @@
 
 
 ## 실행 순서
+### Prerequisites
+* python==3.7
+* spleeter
+* pydub
+* SpeechRecognition
+* azure-cognitiveservices-speech
+* google-cloud-speech
+
+```
+pip install -r requirements
+```
+
+
+
 ### 데이터 준비
 * 원하는 음성을 편집기를 이용하여 자르고 저장합니다. 편집기 선택은 자유지만 제작자는 [shotcut](https://shotcut.org/)을 이용했습니다. 음성을 자를 때, 앞 뒤 공백크기를 적어도 0.3초 정도는 남겨주시길 바랍니다.(공백이 너무 크면 음성합성에 안좋은 영향을 미치고, 너무 작으면 STT작업에서 앞 뒤 말을 잘 알아듣지 못하는 이슈가 있었습니다.)
 * 음성의 확장자는 wav입니다.
@@ -37,7 +51,7 @@
 * 후처리 작업은 크게 combine, delete, target작업으로 구성됩니다.
 * combine작업은 stt작업으로 생긴 json파일들을 한 json파일로 합쳐서 저장하는 작업입니다.
 * delete작업은 사용자가 적합하지 않은 wav파일을 삭제하면, 그에 맞게 json파일을 수정하는 작업입니다.
-* target작업은 trans폴더의 wav파일들과 path의 json파일을 위치해야 하는위치로 이동시킵니다. json파일의 key값을 이동 위치를 반영해서 수정합니다.
+* target작업은 trans폴더의 wav파일들과 path의 json파일(text.json)을 위치해야 하는 위치로 이동시킵니다. json파일의 key값을 이동 위치를 반영해서 수정합니다.
 
 
 ## Code Structure
@@ -68,12 +82,14 @@ Path
  ║    ├── 1_001_spl.wav
  ║    ├── 1_002_spl.wav
  ║    └── ...
- ╠═ trans                               <- trans작업의 결과물을 저장하는 폴더
+ ╠═ trans                               <- trans작업의 결과물을 저장하는 폴더. dataset의 음성
  ║    ├── 1_001_spl.wav
  ║    ├── 1_002_spl.wav
  ║    └── ...
- ╠═ text.json                           <- wav파일의 text들을 json파일 형태로 저장. 처음 stt작업시 생성. dataset을 만들 때 이 json파일을 기준으로 제작. 
- ╠═ google_web_2022-04-20_16-55-47.json  
+ ╠═ text.json                           <- stt의 결과물을 json파일 형태로 저장. 처음 stt작업시 또는 json파일이 하나도 없을 때 생성.       
+ ║                                         dataset을 만들 때 이 json파일을 기준으로 제작. dataset의 text
+ ║ 
+ ╠═ google_web_2022-04-20_16-55-47.json <- stt작업의 결과물들은 "api이름+시간"을 이름으로 하는 json파일로 저장  
  ╠═ azure_stt_2022-04-21_18-21-20.json
  ╠═ ...
  ╠═ 1_001.wav                           <- wav파일들
@@ -86,7 +102,7 @@ Path
 ```
 
 ```
-#후처리 작업에서 
+#후처리 작업 중 target작업에서 targetpath와 dirname을 입력하면 그에 따라 dataset을 위치시키고 디렉토리 이름을 정함
 targetpath
      ╚═══ dirname
              ├── audio
@@ -102,7 +118,6 @@ targetpath
 ### 결과
 * 배경음악을 지우는데 사용한 라이브러리인 spleeter는 배경음악에 가사가 없다는 전제 하에, 탁월한 성능을 보여주었습니다. 다만, 시간이 조금 오래 걸린다는 단점이 있었습니다. 제 노트북 기준 wav파일(약 3초) 1개당 20초 정도 소요되었습니다.
 * 앞에서는 사용가능한 STT api로 google web, google cloud stt, azure stt 총 3가지를 제시했습니다. 하지만 google web은 정확도가 많이 떨어졌고, google cloud stt는 정확도는 높았지만 문장 사이에 공백이 약간이라도 길면 뒤의 문장을 text로 변환하지 않는 이슈가 있었습니다. azure stt는 높은 정확도를 보여주었으며, wav파일의 공백에 대한 이슈도 거의 없었습니다. 사용 할 api로는 azure stt를 추천드립니다. (한 달에 5시간 무료인 점도 장점) 
-
 
 
 
