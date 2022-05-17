@@ -18,8 +18,6 @@ from set import initial
     3. azure stt (유료, azure 계정생성 후 '리소스 만들기' 후 키를 받아야함, 제일 성능좋음)
     
 '''
-def wavlist(p):
-    return sorted([wav for wav in os.listdir(p) if wav.endswith(".wav")], key=lambda x: int(x.split('_')[0]))
 
 class wav_to_text(initial):
     def __init__(self, choose_api, lang, start=0, end=0):
@@ -27,11 +25,11 @@ class wav_to_text(initial):
         self.output = {}
         self.mode=''
         if self.code==0:
-            self.trans_list = wavlist(self.trans_path)
-            self.spl_list = wavlist(self.spl_path)
+            self.trans_list = set.wavlist(self.trans_path)
+            self.spl_list = set.wavlist(self.spl_path)
         elif self.code==1:
-            self.trans_list = sorted([wav for wav in os.listdir(self.trans_path) if wav.endswith(".wav")])
-            self.spl_list = sorted([wav for wav in os.listdir(self.spl_path) if wav.endswith(".wav")])
+            self.trans_list = set.wavlistnon(self.trans_path)
+            self.spl_list = set.wavlistnon(self.spl_path)
         self.lang = lang
 
         if choose_api==1:

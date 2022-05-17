@@ -33,7 +33,7 @@ class initial():
         elif code==1:
             self.path = path
             self.spl_path = path + "\\spleeter_out\\"
-            self.filelist = [wav for wav in os.listdir(self.path) if wav.endswith(".wav")]
+            self.filelist = wavlistnon(self.path)
             self.filenum = len(self.filelist)
             self.partnum = None
             self.trans_path = self.path + "\\trans\\"
