@@ -154,8 +154,8 @@ targetpath
 * 앞에서는 사용가능한 STT api로 google web, google cloud stt, azure stt 총 3가지를 제시했습니다. 하지만 google web은 정확도가 많이 떨어졌고, google cloud stt는 정확도는 높았지만 문장 사이에 공백이 약간이라도 길면 뒤의 문장을 text로 변환하지 않는 이슈가 있었습니다. azure stt는 높은 정확도를 보여주었으며, wav파일의 공백에 대한 이슈도 거의 없었습니다. 사용 할 api로는 azure stt를 추천드립니다. (한 달에 5시간 무료인 점도 장점) 
 
 
-### 추가예정 (soon)
-* 음차번역기능 추가 예정(microsoft사의 transliteration api를 사용 할 예정)
+~~### 추가예정 (soon)~~
+~~* 음차번역기능 추가 예정(microsoft사의 transliteration api를 사용 할 예정)~~
 
 
 
