@@ -1,6 +1,23 @@
+# Notification
+
+이 프로젝트를 바탕으로 [PAFTS](https://github.com/harmlessman/PAFTS)라는 라이브러리를 만들었습니다.
+
+이 프로젝트를 사용 중 혹은 사용 하실 분들은 [PAFTS](https://github.com/harmlessman/PAFTS)를 사용하시는 것을 적극 추천드립니다. 
+
+
+
+<br>
+
+
+
+----
+
+
+
+</br>
+
 # Wavefile_as_dataset
 동영상에서 뽑아낸 음성데이터를 배경음악 제거, transform, STT과정을 통해 (음성, text)쌍으로 만들어주는 project입니다. 
-
 
 
 ## This Project
@@ -161,6 +178,7 @@ targetpath
 
 ###수정예정
 코드를 조금 다듬은 다음, 라이브러리로 배포 할 예정.
+
 
 
 
